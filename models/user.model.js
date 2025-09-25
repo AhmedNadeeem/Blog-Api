@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { hashPass } = require("../utils/bcrypt.utils");
 
 const userSchema = Schema(
   {
@@ -31,4 +32,11 @@ const userSchema = Schema(
   }
 );
 
-module.exports = model("user", userSchema);
+userSchema.pre("save", function(){
+  const hashedPass = hashPass(this.password);
+  this.password = hashedPass;
+});
+
+const User = model("user", userSchema);
+
+module.exports = User;

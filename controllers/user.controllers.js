@@ -1,6 +1,8 @@
 const User = require("../models/user.model");
 const { userRegisterValidation, userLoginValidation } = require("../utils/auth.joi");
 const { passValidate } = require("../utils/bcrypt.utils");
+const jwt = require("jsonwebtoken");
+const { genAccessToken, verifyToken } = require("../utils/jwt.utils")
 
 const registerUser = async (req, res) => {
     try {
@@ -40,9 +42,17 @@ const loginUser = async (req, res) => {
         const passCheck = passValidate(password, userFind.password);
         if(!passCheck) return res.status(401).json({ message: "Incorrect password" });
 
-        return res.status(200).json({ message: "User logged in", user: userFind });
+        const tokenPayload = {
+            userId: userFind._id,
+            email : userFind.email,
+        };
+
+        const token = genAccessToken(tokenPayload);
+
+        return res.cookie("accessToken", token, {httpOnly: true}).status(200).json({ message: "User logged in", user: userFind });
     } catch (error) {
-        return res.status(500).json({ message: "Failed to login user", details: error })
+        console.error(error);
+        return res.status(500).json({ message: "Failed to login user", details: error.message })
     }
 }
 

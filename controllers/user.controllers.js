@@ -49,6 +49,11 @@ const loginUser = async (req, res) => {
 
         const token = genAccessToken(tokenPayload);
 
+        res.cookie(
+            "accessToken", 
+            token, 
+            { httpOnly: true }
+        );
         return res.cookie("accessToken", token, {httpOnly: true}).status(200).json({ message: "User logged in", user: userFind });
     } catch (error) {
         console.error(error);

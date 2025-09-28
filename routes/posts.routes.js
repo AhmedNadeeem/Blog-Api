@@ -4,14 +4,14 @@ const { verifyTokenMiddleware } = require("../middlewares/user.middlewares")
 
 const postRouter = Router();
 
-postRouter.get("/posts", verifyTokenMiddleware, getAllPosts);
+postRouter.get("/", verifyTokenMiddleware, getAllPosts);
 
-postRouter.get("/posts/:id", verifyTokenMiddleware, getSinglePost);
+postRouter.get("/:id", verifyTokenMiddleware, getSinglePost);
 
-postRouter.post("/posts", verifyTokenMiddleware, createPosts);
+postRouter.post("/", verifyTokenMiddleware, createPosts);
 
-postRouter.put("/posts", verifyTokenMiddleware, updatePosts);
+postRouter.put("/:id", verifyTokenMiddleware, updatePosts);
 
-postRouter.delete("/posts/:id", verifyTokenMiddleware, deletePosts);
+postRouter.delete("/:id", verifyTokenMiddleware, deletePosts);
 
 module.exports = postRouter;

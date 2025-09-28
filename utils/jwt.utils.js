@@ -7,13 +7,12 @@ const genAccessToken = (payload)=>{
 };
 
 const verifyToken = (token)=>{
-    const data = jwt.verify(token);
+    const data = jwt.verify(token, process.env.JWT_SECRET);
     if(data){
         return data
     } else {
         return false
     }
-
 }
 
 module.exports = {

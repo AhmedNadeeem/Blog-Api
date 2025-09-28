@@ -1,5 +1,7 @@
 const Post = require("../models/post.model");
-const { postCreateValidation } = require("../utils/auth.joi")
+const User = require("../models/user.model");
+const { postCreateValidation } = require("../utils/auth.joi");
+
 
 const getAllPosts = async (req,res) => {
     try {
@@ -17,8 +19,8 @@ const getAllPosts = async (req,res) => {
 
 const getSinglePost = async (req,res)=>{
     try {
-        const postId = req.params.id;
         const userData = req.user;
+        const postId = req.params.id;
 
         const post = await Post.findOne({ _id: postId, author: userData.userId });
         if(!post) return res.status(400).json({ message: "No post found for this id", success: false });
@@ -32,12 +34,17 @@ const getSinglePost = async (req,res)=>{
 
 const createPosts = async (req,res)=>{
     try {
-    const userData = req.user;
-    const { error, value } = postCreateValidation(req.body);
+    const userData = await req.user;
+    console.log("create post: ", userData);
+
+    const { error, value } = await postCreateValidation(req.body);
     if (error) return res.status(400).json({ message: "Bad credentials", success: false, details: error });
     console.log(value);
 
-    const newPost = await Post.create( { ...value, avatar: userData.userId } );
+    const user = await User.findById(userData.userId);
+    if(!user) return res.status(400).json({ message: "User not found", success: false });
+
+    const newPost = await Post.create( { ...value, author: user._id } );
     if(!newPost) return res.status(400).json({ message: "Bad credentials", success: false });
 
      return res.status(201).json({ message: "Post created", success: true, post: newPost });

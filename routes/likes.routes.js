@@ -6,6 +6,6 @@ const likeRouter = Router();
 
 likeRouter.post("/like/:id", verifyTokenMiddleware, likePost);
 
-likeRouter.post("/dislike/:id", verifyTokenMiddleware, dislikePost);
+likeRouter.delete("/dislike/:id", verifyTokenMiddleware, dislikePost);
 
 module.exports = likeRouter;

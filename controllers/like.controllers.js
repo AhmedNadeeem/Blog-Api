@@ -8,7 +8,7 @@ const likePost = async (req, res) => {
 
     const user = await User.findById(userData.userId);
     if (!user)
-      res.status(400).json({ message: "User not registered", success: false });
+      return res.status(400).json({ message: "User not registered", success: false });
 
     await Post.findByIdAndUpdate(
       postId,
@@ -36,7 +36,7 @@ const dislikePost = async (req, res) => {
 
     const user = await User.findById(userData.userId);
     if (!user)
-      res.status(400).json({ message: "User not registered", success: false });
+      return res.status(400).json({ message: "User not registered", success: false });
 
     await Post.findByIdAndUpdate(
       postId,

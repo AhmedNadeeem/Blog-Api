@@ -1,16 +1,18 @@
 const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
-const User = require("../controllers/user.controllers");
+const User = require("../models/user.model");
 
 const addComment = async (req, res) => {
   try {
     const postId = req.params.id;
     const userData = req.user;
-    const commentText = req.body;
+    const { commentText } = req.body;
     if (!commentText)
       return res
         .status(400)
         .json({ message: "Comment text required", success: false });
+    console.log(commentText)
+    console.log(typeof(commentText))
 
     const user = await User.findById(userData.userId);
     if (!user)
@@ -51,7 +53,7 @@ const removeComment = async (req, res) => {
     try {
     const postId = req.params.id;
     const userData = req.user;
-    const commentId = req.body;
+    const { commentId } = req.body;
     if (!commentId)
       return res
         .status(400)
@@ -70,9 +72,12 @@ const removeComment = async (req, res) => {
         .json({ message: "Post not found", success: false });
 
     const comment = await Comment.findByIdAndDelete( commentId );
+    console.log(comment);
 
-    post.comments = post.comments.filter((commentId) => commentId != comment._id);
-    post.save();
+    if(post.comments.includes(comment._id)) {
+      post.comments = post.comments.filter(id => id.toString() !== comment._id.toString() );
+      post.save();
+    }
 
     return res.status(200).json({
       message: "Comment removed",

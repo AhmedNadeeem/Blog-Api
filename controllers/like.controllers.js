@@ -10,13 +10,17 @@ const likePost = async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "User not registered", success: false });
 
-    await Post.findByIdAndUpdate(
-      postId,
-      { $push: { likes: user._id } },
-      { new: true }
-    );
+    const post = await Post.findById(postId);
+    if (!post)
+      return res.status(400).json({ message: "Post not found", success: false });
+    
+    if(post.likes.includes(user._id))
+      return res.status(400).json({ message: "You've already like this post", success: false });
 
-    res.status(200).json({ message: "Post Liked", success: true });
+    post.likes.push(user._id);
+    post.save();
+
+    return res.status(200).json({ message: "Post Liked", success: true });
   } catch (error) {
     console.error(error);
     return res
@@ -38,11 +42,16 @@ const dislikePost = async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "User not registered", success: false });
 
-    await Post.findByIdAndUpdate(
-      postId,
-      { $pull: { likes: user._id } },
-      { new: true }
-    );
+    const post = await Post.findById(postId);
+    if (!post)
+      return res.status(400).json({ message: "Post not found", success: false });
+    
+    if(!post.likes.includes(user._id)) {
+      return res.status(400).json({ message: "You haven't like this post", success: false });
+    }
+
+    post.likes = post.likes.filter(id => id.toString() !== user._id.toString() );
+    await post.save();
 
     res.status(200).json({ message: "Post Disliked", success: true });
   } catch (error) {

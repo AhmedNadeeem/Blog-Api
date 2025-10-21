@@ -57,13 +57,11 @@ const createPosts = async (req,res)=>{
 const updatePosts = async (req,res)=>{
     try {
         const postId = req.params.id;
-        const userData = req.user;
 
-        const {error, value} = postCreateValidation(req.body);
+        const {error, value} = await postCreateValidation(req.body);
         if (error) return res.status(400).json({ message: "Bad credentials", success: false, details: error });
-        console.log(value);
 
-        const post = await Post.findByIdAndUpdate( { _id: postId }, { ...value, avatar: userData.userId });
+        const post = await Post.findByIdAndUpdate( { _id: postId }, { ...value });
         if(!post) return res.status(400).json({ message: "Bad credentials", success: false });
 
         return res.status(200).json({ message: "Post updated", success: true, post: post });

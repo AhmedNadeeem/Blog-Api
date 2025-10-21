@@ -26,7 +26,7 @@ const grantAccess = async (req, res) => {
         .status(400)
         .json({ message: "User not registered", success: false });
 
-    const post = await Post.find({ author: user._id, postId: postId });
+    const post = await Post.findOne({ author: user._id, _id: postId });
     if (!post)
       return res
         .status(400)
@@ -42,6 +42,7 @@ const grantAccess = async (req, res) => {
         userId: newUser._id,
         blogId: post._id,
       };
+      console.log(payload)
 
       switch (accessRole) {
         case "admin":

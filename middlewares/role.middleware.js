@@ -24,7 +24,7 @@ const verifyRoleMiddleware = async (req, res, next) => {
         .status(400)
         .json({ message: "User not found with this id", success: false });
 
-    const userAccess = await BlogAccess.find({
+    const userAccess = await BlogAccess.findOne({
       userId: user._id,
       blogId: post._id,
     });
@@ -33,17 +33,17 @@ const verifyRoleMiddleware = async (req, res, next) => {
         .status(400)
         .json({ message: "User access not found", success: false });
 
-    if (userAccess.role === "admin") {
+    if (userAccess.role == "admin") {
       return next();
     } else if (userAccess.role === "editor") {
       return next();
+    } else if (post.author.toString() == user._id.toString()) {
+      return next();
     } else {
-      return res
-        .status(400)
-        .json({
-          message: "You are not eligible for this action",
-          success: false,
-        });
+      return res.status(400).json({
+        message: "You are not eligible for this action",
+        success: false,
+      });
     }
   } catch (error) {
     console.error(error);

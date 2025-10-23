@@ -32,8 +32,8 @@ const userSchema = Schema(
   }
 );
 
-userSchema.pre("save", function(){
-  const hashedPass = hashPass(this.password);
+userSchema.pre("save", async function(){
+  const hashedPass = await hashPass(this.password);
   this.password = hashedPass;
 });
 

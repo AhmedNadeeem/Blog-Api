@@ -6,17 +6,20 @@ const likeRouter = require("./routes/likes.routes");
 const commentRouter = require("./routes/comments.routes");
 const accessRouter = require("./routes/access.routes");
 const env = require("dotenv");
+const helmet = require("helmet");
 
 const app = express();
 
 env.config();
 
-mongoose.connect('mongodb://127.0.0.1:27017/blog-api')
-.then(()=> console.log("Connected to DB"))
-.catch((err)=> console.error(err));
+mongoose
+  .connect("mongodb://127.0.0.1:27017/blog-api")
+  .then(() => console.log("Connected to DB"))
+  .catch((err) => console.error(err));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(helmet());
 
 app.use("/api/users/", userRouter);
 app.use("/api/posts/", postRouter);

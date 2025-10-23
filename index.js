@@ -8,6 +8,7 @@ const accessRouter = require("./routes/access.routes");
 const env = require("dotenv");
 const helmet = require("helmet");
 const { rateLimit } = require("express-rate-limit");
+const { xss } = require('express-xss-sanitizer');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(helmet());
 app.use(limiter);
+app.use(xss());
 
 app.use("/api/users/", userRouter);
 app.use("/api/posts/", postRouter);

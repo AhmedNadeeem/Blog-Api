@@ -9,6 +9,7 @@ const env = require("dotenv");
 const helmet = require("helmet");
 const { rateLimit } = require("express-rate-limit");
 const { xss } = require('express-xss-sanitizer');
+const mongoSanitize = require("express-mongo-sanitize")
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(limiter);
 app.use(xss());
+app.use(mongoSanitize());
 
 app.use("/api/users/", userRouter);
 app.use("/api/posts/", postRouter);

@@ -7,6 +7,7 @@ const commentRouter = require("./routes/comments.routes");
 const accessRouter = require("./routes/access.routes");
 const env = require("dotenv");
 const helmet = require("helmet");
+const { rateLimit } = require("express-rate-limit");
 
 const app = express();
 
@@ -17,9 +18,20 @@ mongoose
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.error(err));
 
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    limit: 10,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    ipv6Subnet: 56,
+    message: "Too many requests",
+    statusCode: 429,
+})
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(helmet());
+app.use(limiter);
 
 app.use("/api/users/", userRouter);
 app.use("/api/posts/", postRouter);
